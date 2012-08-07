@@ -228,12 +228,19 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
 				SULog( @"rm failed" );
 		}
 		
-		if( res && haveDst )	// Move old exe to tmp path.
+		if( res && haveDst )	// Copy old exe to tmp path.
 		{
-			const char* mvParams[] = { "-f", dstPath, tmpPath, NULL };
-			res = AuthorizationExecuteWithPrivilegesAndWait( auth, "/bin/mv", kAuthorizationFlagDefaults, mvParams );
+			const char* mvParams[] = { "-fRP", dstPath, tmpPath, NULL };
+			res = AuthorizationExecuteWithPrivilegesAndWait( auth, "/bin/cp", kAuthorizationFlagDefaults, mvParams );
 			if( !res )
-				SULog( @"mv 1 failed" );
+				SULog( @"cp 1 failed" );
+		}
+        
+        if( res && haveDst )    //Remove original file (after having copyied to tempPath)
+			const char* rmParams2[] = { "-rf", dstPath, NULL };
+			res = AuthorizationExecuteWithPrivilegesAndWait( auth, "/bin/rm", kAuthorizationFlagDefaults, rmParams2 );
+            if( !res )
+				SULog( @"rm 2 failed" );
 		}
 				
 		if( res )	// Move new exe to old exe's path.
@@ -431,7 +438,7 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
 	OSStatus	err;
 	BOOL		hadFileAtDest = NO, didFindTrash = NO;
 	NSString	*tmpPath = [self _temporaryCopyNameForPath: dst didFindTrash: &didFindTrash];
-	
+    
 	// Make FSRef for destination:
 	err = FSPathMakeRefWithOptions((UInt8 *)[dst fileSystemRepresentation], kFSPathMakeRefDoNotFollowLeafSymlink, &dstRef, NULL);
 	hadFileAtDest = (err == noErr);	// There is a file at the destination, move it aside. If we normalized the name, we might not get here, so don't error.
@@ -465,7 +472,7 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
 		if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_5)
 		{
 			NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
-			BOOL success = [manager moveItemAtPath:dst toPath:tmpPath error:error];
+			BOOL success = [manager copyItemAtPath:dst toPath:tmpPath error:error] && [manager removeItemAtPath:dst error:error];
 			if (!success && hadFileAtDest)
 			{
 				if (error != NULL)
@@ -495,7 +502,9 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
 			{
 				// We better move the old version back to its old location
 				if( hadFileAtDest )
+                {
 					success = [manager moveItemAtPath:tmpPath toPath:dst error:error];
+                }
 				if (error != NULL)
 					*error = [NSError errorWithDomain:SUSparkleErrorDomain code:SUFileCopyFailure userInfo:[NSDictionary dictionaryWithObject:[NSString stringWithFormat:@"Couldn't move %@ to %@.", dst, tmpPath] forKey:NSLocalizedDescriptionKey]];
 				return NO;

@@ -39,7 +39,6 @@ static NSString * const SUInstallerErrorKey = @"SUInstallerError";
 	NSString	*	oldPath = [[info objectForKey:SUInstallerHostKey] bundlePath];
 	NSString	*	installationPath = [[info objectForKey:SUInstallerHostKey] installationPath];
 	BOOL result = [self copyPathWithAuthentication:[info objectForKey:SUInstallerPathKey] overPath: installationPath temporaryName:[info objectForKey:SUInstallerTempNameKey] error:&error];
-	
 	if( result )
 	{
 		BOOL	haveOld = [[NSFileManager defaultManager] fileExistsAtPath: oldPath];
