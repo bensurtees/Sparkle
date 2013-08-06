@@ -237,6 +237,7 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
 		}
         
         if( res && haveDst )    //Remove original file (after having copyied to tempPath)
+        {
 			const char* rmParams2[] = { "-rf", dstPath, NULL };
 			res = AuthorizationExecuteWithPrivilegesAndWait( auth, "/bin/rm", kAuthorizationFlagDefaults, rmParams2 );
             if( !res )
