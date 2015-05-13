@@ -243,12 +243,20 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
                 SULog(@"rm failed");
         }
 
-        if (res && haveDst) // Move old exe to tmp path.
+        if (res && haveDst) // Copy old exe to tmp path.
         {
-            const char *mvParams[] = { "-f", dstPath, tmpPath, NULL };
-            res = AuthorizationExecuteWithPrivilegesAndWait(auth, "/bin/mv", kAuthorizationFlagDefaults, mvParams);
+            const char *mvParams[] = { "-fRP", dstPath, tmpPath, NULL };
+            res = AuthorizationExecuteWithPrivilegesAndWait(auth, "/bin/cp", kAuthorizationFlagDefaults, mvParams);
             if (!res)
-                SULog(@"mv 1 failed");
+                SULog(@"cp 1 failed");
+        }
+        
+        if(res && haveDst)    //Remove original file (after having copyied to tempPath)
+        {
+            const char* rmParams2[] = { "-rf", dstPath, NULL };
+            res = AuthorizationExecuteWithPrivilegesAndWait( auth, "/bin/rm", kAuthorizationFlagDefaults, rmParams2 );
+            if( !res )
+                SULog( @"rm 2 failed" );
         }
 
         if (res) // Move new exe to old exe's path.
@@ -491,7 +499,7 @@ static BOOL AuthorizationExecuteWithPrivilegesAndWait(AuthorizationRef authoriza
 	if (err == noErr && hadFileAtDest)
 	{
         NSFileManager *manager = [[NSFileManager alloc] init];
-        BOOL success = [manager moveItemAtPath:dst toPath:tmpPath error:error];
+        BOOL success = [manager copyItemAtPath:dst toPath:tmpPath error:error] && [manager removeItemAtPath:dst error:error];
         if (!success && hadFileAtDest)
         {
             if (error != NULL)
