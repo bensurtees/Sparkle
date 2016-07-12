@@ -98,7 +98,7 @@
 	if (self.downloadFilename)
 	{
         NSUInteger options = 0;
-        options = NSXMLNodeLoadExternalEntitiesSameOriginOnly;
+        options = NSXMLNodeLoadExternalEntitiesNever; // Prevent inclusion from file://
         document = [[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:self.downloadFilename] options:options error:&error];
 
         [[NSFileManager defaultManager] removeItemAtPath:self.downloadFilename error:nil];

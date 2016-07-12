@@ -1097,7 +1097,6 @@
 				8DC2EF560486A6940098B216 /* Frameworks */,
 				6131B1910DDCDE32005215F0 /* Run Script: Set Git Version Info */,
 				6195D4B40E40505A00D41A50 /* Run Script: Link fr_CA to fr */,
-				61E31A85103299750051D188 /* Run Script: Link pt to pt_BR */,
 			);
 			buildRules = (
 			);
@@ -1298,23 +1297,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env sh";
 			shellScript = "ln -sfh \"fr.lproj\" \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/fr_CA.lproj\"";
-			showEnvVarsInLog = 0;
-		};
-		61E31A85103299750051D188 /* Run Script: Link pt to pt_BR */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/pt_BR.lproj",
-			);
-			name = "Run Script: Link pt to pt_BR";
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/pt.lproj",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/usr/bin/env sh";
-			shellScript = "ln -sfh \"pt_BR.lproj\" \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH/pt.lproj\"";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1622,6 +1604,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941CF0D94A70100DD942E /* ConfigCommonDebug.xcconfig */;
 			buildSettings = {
+				SPARKLE_VERSION_MINOR = 20;
 			};
 			name = Debug;
 		};
@@ -1629,6 +1612,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FA1941CC0D94A70100DD942E /* ConfigCommonRelease.xcconfig */;
 			buildSettings = {
+				SPARKLE_VERSION_MINOR = 20;
 			};
 			name = Release;
 		};
